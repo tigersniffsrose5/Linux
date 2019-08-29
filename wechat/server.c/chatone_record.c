@@ -1,12 +1,10 @@
 #include "server.h"
 
-void chatone(pack *recv)
+void chatonerecord(pack *recv)
 {
+    int flag = 0;
     MYSQL_RES *res;   
     MYSQL_ROW row;
-    char str[256], s[256];
-    int flag = 0;
-    time_t timep;    
 
     if (mysql_real_query(&mysql, "select * from nam_pass", (unsigned long)strlen("select * from nam_pass"))) {  
         printf("mysql_real_query select failure!\n"); 
@@ -25,7 +23,7 @@ void chatone(pack *recv)
     }
 
     if ( flag != 1 ) {
-        sprintf(recv->message, "no this person which named %s!", recv->recv_name);
+        sprintf(recv->record, "no this person which named %s!", recv->recv_name);
         send(recv->send_fd, recv, sizeof(pack), 0);
         return ;
     }
@@ -47,29 +45,36 @@ void chatone(pack *recv)
     }
     mysql_free_result(res);
     if ( flag != 2 ) {
-        strcpy(recv->message, "this people isn't your friend!");
+        strcpy(recv->record, "this people isn't your friend!");
         send(recv->send_fd, recv, sizeof(pack), 0);
         return ;
     }
-
-    recv->recv_fd = search(head, recv->recv_name);
-    strcpy(recv->login_name, recv->recv_name);
-
-    time(&timep);
-    strcpy(s, ctime(&timep));
-    s[strlen(s)-1] = '\0';
-    sprintf(str,"insert into chatone_record values ('%s','%s','%s','%s')",recv->send_name,recv->recv_name,s,recv->record);
-            if (mysql_real_query(&mysql,str,strlen(str))) {
-                printf("mysql_real_query insert failure!\n");
-                exit(0);
-            }
-
-
-    if ( recv->recv_fd != 0  ) {
-        send(recv->recv_fd, recv, sizeof(pack), 0);
+    
+    if (mysql_real_query(&mysql, "select * from chatone_record", (unsigned long)strlen("select * from chatone_record"))) {  
+        printf("mysql_real_query select failure!\n"); 
+        exit(0);  
     }
-    else {
-        memcpy((void *)&send_array[num_send_pack++],(void *)recv, sizeof(pack));
+    res = mysql_store_result(&mysql);
+    if (NULL == res) {  
+        printf("mysql_store_result failure!\n");  
+        exit(0);  
+    }
+    while ((row = mysql_fetch_row(res))) {
+        if ( strcmp(row[0], recv->send_name)==0 && strcmp(row[1], recv->recv_name) == 0 ) {
+            strcat(recv->record, row[2]);
+            strcat(recv->record, " ");
+            strcat(recv->record, row[3]);
+            strcat(recv->record, "\n");
+        }
+        else if ( strcmp(row[1], recv->send_name)==0 && strcmp(row[0], recv->recv_name) == 0 ) {
+            strcat(recv->record, row[2]);
+            strcat(recv->record, " ");
+            strcat(recv->record, row[3]);
+            strcat(recv->record, "\n");
+        }
     }
 
+    mysql_free_result(res);
+    send(recv->send_fd, recv, sizeof(pack), 0);
 }
+

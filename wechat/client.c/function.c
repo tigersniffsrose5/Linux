@@ -2,22 +2,24 @@
 
 void work()
 {
-    printf("*****************************\n");
-    printf("*****  0.exit           *****\n");
-    printf("*****  1.message box    *****\n");
-    printf("*****  2.add friend     *****\n");
-    printf("*****  3.delete friend  *****\n");
-    printf("*****  4.show friends   *****\n");
-    printf("*****  5.chatone        *****\n");
-    printf("*****  6.create group   *****\n");
-    printf("*****  7.invite person  *****\n");
-    printf("*****  8.add group      *****\n");
-    printf("*****  9.chat in group  *****\n");
-    printf("*****  10.send file     *****\n");
-    printf("*****  11.show groups   *****\n");
-    printf("*****  12.kick person   *****\n");
-    printf("*****  13.quit group    *****\n");
-    printf("*****************************\n");
+    printf("*********************************\n");
+    printf("*****  0.exit               *****\n");
+    printf("*****  1.message box        *****\n");
+    printf("*****  2.add friend         *****\n");
+    printf("*****  3.delete friend      *****\n");
+    printf("*****  4.show friends       *****\n");
+    printf("*****  5.chatone            *****\n");
+    printf("*****  6.create group       *****\n");
+    printf("*****  7.invite person      *****\n");
+    printf("*****  8.add group          *****\n");
+    printf("*****  9.chat in group      *****\n");
+    printf("*****  10.send file         *****\n");
+    printf("*****  11.show groups       *****\n");
+    printf("*****  12.kick person       *****\n");
+    printf("*****  13.quit group        *****\n");
+    printf("*****  14.chatone record    *****\n");
+    printf("*****  15.chatgroup record  *****\n");
+    printf("*********************************\n");
 }
 
 int function()
@@ -68,6 +70,12 @@ int function()
             break;
         case 13:
             quitgroup();
+            break;
+        case 14:
+            chatonerecord();
+            break;
+        case 15:
+            chatgrouprecord();
             break;
         default:
             break;

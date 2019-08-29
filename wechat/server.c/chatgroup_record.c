@@ -1,9 +1,8 @@
 #include "server.h"
 
-void quitgroup( pack *recv )
+void chatgrouprecord(pack *recv)
 {
     int flag = 0;
-    char str[256];
     MYSQL_RES *res;   
     MYSQL_ROW row;
 
@@ -17,17 +16,19 @@ void quitgroup( pack *recv )
         exit(0);  
     }
     while ((row = mysql_fetch_row(res))) {
-        if ( strcmp(row[0], recv->recv_name)==0  ) {
-            flag = 3;
+        if ( strcmp(recv->recv_name, row[0]) == 0 ) {
+            flag = 1;
             break;
         }
     }
-    mysql_free_result(res);
-    if ( flag != 3 ) {
-        strcpy(recv->message, "no this group!");
+
+    if ( flag != 1 ) {
+        sprintf(recv->record, "no this group which named %s!", recv->recv_name);
         send(recv->send_fd, recv, sizeof(pack), 0);
         return ;
     }
+    mysql_free_result(res);
+
     if (mysql_real_query(&mysql, "select * from group_info", (unsigned long)strlen("select * from group_info"))) {  
         printf("mysql_real_query select failure!\n"); 
         exit(0);  
@@ -38,32 +39,38 @@ void quitgroup( pack *recv )
         exit(0);  
     }
     while ((row = mysql_fetch_row(res))) {
-        if ( strcmp(row[0], recv->recv_name)==0 && strcmp(row[1], recv->send_name) == 0 ) {
+        if ( strcmp(recv->recv_name, row[0]) == 0 && strcmp(recv->send_name, row[1]) == 0 ) {
             flag = 2;
-            recv->ans = atoi(row[2]);
             break;
         }
     }
-    mysql_free_result(res);
+
     if ( flag != 2 ) {
-        strcpy(recv->message, "you aren't in this group!");
+        sprintf(recv->record, "you isn't in this group which named %s!", recv->recv_name);
         send(recv->send_fd, recv, sizeof(pack), 0);
         return ;
     }
+    mysql_free_result(res);
 
-    if (recv->ans == 1) {
-        sprintf(str, "delete from group_info where groupname = '%s'", recv->recv_name); 
-        mysql_real_query(&mysql,str,strlen(str));
-
-        strcpy(recv->message, "you are the group owner,disbandment group sucess!");
-        send(recv->send_fd, recv, sizeof(pack), 0);
-        return ;
+    if (mysql_real_query(&mysql, "select * from chatgroup_record", (unsigned long)strlen("select * from chatgroup_record"))) {  
+        printf("mysql_real_query select failure!\n"); 
+        exit(0);  
     }
-    sprintf(str, "delete from group_info where groupname = '%s' and membername = '%s'", recv->recv_name, recv->send_name); 
-    mysql_real_query(&mysql,str,strlen(str));
-    strcpy(recv->message, "quit group success!");
+    res = mysql_store_result(&mysql);
+    if (NULL == res) {  
+        printf("mysql_store_result failure!\n");  
+        exit(0);  
+    }
+    while ((row = mysql_fetch_row(res))) {
+        if ( strcmp(row[0], recv->recv_name)==0 ) {
+            strcat(recv->record, row[1]);
+            strcat(recv->record, " ");
+            strcat(recv->record, row[2]);
+            strcat(recv->record, "\n");
+        }
+    }
+
+    mysql_free_result(res);
     send(recv->send_fd, recv, sizeof(pack), 0);
 
 }
-
-

@@ -55,6 +55,11 @@ void *recv_pack( void *fd )
             kick_person(pack_t);
         if ( pack_t.type == 13 )
             quit_group(pack_t);
+        if ( pack_t.type == 14 )
+            chatone_record(pack_t);
+        if ( pack_t.type == 15 )
+            chatgroup_record(pack_t);
+
     }
 }
 

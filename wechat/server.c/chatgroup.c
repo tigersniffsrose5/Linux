@@ -5,7 +5,8 @@ void chatgroup(pack *recv)
     MYSQL_RES *res;   
     MYSQL_ROW row;
     int flag = 0;
-    char name[256];
+    char name[256], s[256], str[256];
+    time_t timep;
 
     strcpy(name, recv->send_name);
     if ( recv->ans == 1 ) {
@@ -31,6 +32,30 @@ void chatgroup(pack *recv)
             return ;
         }
         mysql_free_result(res);
+        
+        if (mysql_real_query(&mysql, "select * from group_info", (unsigned long)strlen("select * from group_info"))) {  
+            printf("mysql_real_query select failure!\n"); 
+            exit(0);  
+        }
+        res = mysql_store_result(&mysql);
+        if (NULL == res) {  
+            printf("mysql_store_result failure!\n");  
+            exit(0);  
+        }
+        while ((row = mysql_fetch_row(res))) {
+            if ( strcmp(recv->recv_name, row[0]) == 0 && strcmp(name, row[1]) == 0 ) {
+                flag = 2;
+                break;
+            }
+        }
+
+        if ( flag != 2 ) {
+            sprintf(recv->message, "you isn't in this group which named %s!", recv->recv_name);
+            send(recv->send_fd, recv, sizeof(pack), 0);
+            return ;
+        }
+        mysql_free_result(res);
+
     }
 
     if (mysql_real_query(&mysql, "select * from group_info", (unsigned long)strlen("select * from group_info"))) {  
@@ -42,8 +67,18 @@ void chatgroup(pack *recv)
         printf("mysql_store_result failure!\n");  
         exit(0);  
     }
-    while ((row = mysql_fetch_row(res))) {
-        if ( strcmp(row[0], recv->recv_name)==0 && strcmp(row[1], name)!=0 ) {
+    
+    time(&timep);
+    strcpy(s, ctime(&timep));
+    s[strlen(s)-1] = '\0';
+    sprintf(str,"insert into chatgroup_record values ('%s','%s','%s')",recv->recv_name,s,recv->record);
+            if (mysql_real_query(&mysql,str,strlen(str))) {
+                printf("mysql_real_query insert failure!\n");
+                exit(0);
+            }
+
+   while ((row = mysql_fetch_row(res))) {
+        if ( strcmp(row[0], recv->recv_name) == 0 && strcmp(row[1], name) != 0 ) {
             strcpy(recv->send_name, row[1]);
             recv->recv_fd = search(head, recv->send_name);
             strcpy(recv->login_name, recv->send_name);

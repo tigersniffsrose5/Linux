@@ -30,6 +30,10 @@ void chatone()
             strcpy(chatname, "");
             break;
         }
+        sprintf(str, "%s: %s", send_t.send_name, send_t.message);
+        memset(send_t.record,0,strlen(send_t.record));
+        strcpy(send_t.record, str);
+        memset(str,0,strlen(str));
         sprintf(str, "\033[0;34m%s%s:\n%s\033[0m", ctime(&timep), send_t.send_name, send_t.message);
         memset(send_t.message,0,strlen(send_t.message));
         strcpy(send_t.message, str);
@@ -67,6 +71,10 @@ void chat_one( pack pack_t, int i )
             strcpy(chatname, "");
             break;
         }
+        sprintf(str, "%s: %s", pack_t.recv_name, send_message.message);
+        memset(send_message.record,0,strlen(send_message.record));
+        strcpy(send_message.record, str);
+        memset(str,0,strlen(str));
         sprintf(str, "\033[0;34m%s%s:\n%s\033[0m", ctime(&timep), pack_t.recv_name, send_message.message);
         memset(send_message.message,0,strlen(send_message.message));
         strcpy(send_message.message, str);

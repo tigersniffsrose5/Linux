@@ -26,6 +26,7 @@ typedef struct {
     int recv_fd;
     char message[256];
     char file[300];
+    char record[10000];
 }pack;
 
 int conn_fd;
@@ -68,3 +69,7 @@ void chat_group(pack pack_t, int i);
 void kick_person( pack pack_t );
 void quit_group( pack pack_t );
 void quitgroup();
+void chatgrouprecord();
+void chatonerecord();
+void chatone_record( pack pack_t );
+void chatgroup_record( pack pack_t );

@@ -47,6 +47,12 @@ void *work( void *recv )
     case 13:
         quitgroup(p);
         break;
+    case 14:
+        chatonerecord(p);
+        break;
+    case 15:
+        chatgrouprecord(p);
+        break;
     default:
         break;
     }

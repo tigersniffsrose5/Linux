@@ -47,6 +47,7 @@ typedef struct {
      int recv_fd;           
      char message[256];     
      char file[300];
+     char record[10000];
 }pack;
 
 typedef struct Node{
@@ -89,3 +90,5 @@ void chatone(pack *recv);
 void showgroups(pack *recv);
 void kickperson(pack *recv);
 void quitgroup( pack *recv );
+void chatonerecord(pack *recv);
+void chatgrouprecord(pack *recv);
