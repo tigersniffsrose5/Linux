@@ -8,7 +8,7 @@ int main()
     struct sockaddr_in cli_addr, serv_addr;
     struct epoll_event ev, events[1000];
     pack recv_t, *p;
-    pthread_t thid;
+    //pthread_t thid;
 
     mysql_init_t();
     epfd = epoll_create(10000);
