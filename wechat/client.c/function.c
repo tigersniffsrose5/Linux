@@ -1,5 +1,7 @@
 #include "client.h"
 
+typedef void Function();
+
 void work()
 {
     printf("*********************************\n");
@@ -26,60 +28,19 @@ int function()
 {
     char choice_t[101];
     int choice;
+    Function Work[] = {deal_pack, addfriend, deletefriend, showfriends, chatone, creategroup, inviteperson, addgroup, chatgroup, sendfile, showgroups, 
+    kickperson, quitgroup, chatonerecord, chatgrouprecord};
+
     do {
         work();
         printf("*****choice:\n");
         scanf("%s", choice_t);getchar();
         choice = get_choice(choice_t);
-        switch (choice) {
-        case 1:
-            deal_pack();
-            break;
-        case 2:
-            addfriend();
-            break;
-        case 3:
-            deletefriend();
-            break;
-        case 4:
-            showfriends();
-            break;
-        case 5:
-            chatone();
-            break;
-        case 6:
-            creategroup();
-            break;
-        case 7:
-            inviteperson();
-            break;
-        case 8:
-            addgroup();
-            break;
-        case 9:
-            chatgroup();
-            break;
-        case 10:
-            sendfile();
-            break;
-        case 11:
-            showgroups();
-            break;
-        case 12:
-            kickperson();
-            break;
-        case 13:
-            quitgroup();
-            break;
-        case 14:
-            chatonerecord();
-            break;
-        case 15:
-            chatgrouprecord();
-            break;
-        default:
-            break;
+        
+        if ( choice <= 15 && choice >= 1 ) {
+            Work[choice]();
         }
+
     }while (choice != 0);
     return 0;
 }
