@@ -1,6 +1,6 @@
 #include "client.h"
 
-typedef void Function();
+//typedef void Function();
 
 void work()
 {
@@ -28,7 +28,7 @@ int function()
 {
     char choice_t[101];
     int choice;
-    Function Work[] = {deal_pack, addfriend, deletefriend, showfriends, chatone, creategroup, inviteperson, addgroup, chatgroup, sendfile, showgroups, 
+    void (* Work[])() = {deal_pack, addfriend, deletefriend, showfriends, chatone, creategroup, inviteperson, addgroup, chatgroup, sendfile, showgroups, 
     kickperson, quitgroup, chatonerecord, chatgrouprecord};
 
     do {
